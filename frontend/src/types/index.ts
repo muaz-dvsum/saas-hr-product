@@ -1,10 +1,10 @@
 export interface User {
   id: string;
-  username: string;
   email: string;
   role: 'employee' | 'manager';
   name: string;
   managerId?: string;
+  leaveBalance?: number;
 }
 
 export interface LeaveBalance {
@@ -45,9 +45,10 @@ export interface ApiResponse<T> {
 
 export interface AuthContextType {
   user: User | null;
-  login: (username: string, password: string) => Promise<boolean>;
+  login: (userId: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
+  availableUsers: User[];
 }
 
 export interface LeaveSummary {

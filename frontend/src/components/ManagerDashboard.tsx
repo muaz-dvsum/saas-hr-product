@@ -124,14 +124,14 @@ export default function ManagerDashboard() {
                 <button
                   onClick={() => handleApproveReject(request.id, 'approve')}
                   disabled={processingId === request.id}
-                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {processingId === request.id ? 'Processing...' : 'Approve'}
                 </button>
                 <button
                   onClick={() => handleApproveReject(request.id, 'reject', 'Request rejected by manager')}
                   disabled={processingId === request.id}
-                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {processingId === request.id ? 'Processing...' : 'Reject'}
                 </button>

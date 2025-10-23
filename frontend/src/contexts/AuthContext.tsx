@@ -2,39 +2,14 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, AuthContextType } from '@/types';
+import { api } from '@/lib/api';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// Mock users data
-const mockUsers: User[] = [
-  {
-    id: '1',
-    username: 'john.doe',
-    email: 'john.doe@company.com',
-    role: 'employee',
-    name: 'John Doe',
-    managerId: '3'
-  },
-  {
-    id: '2',
-    username: 'jane.smith',
-    email: 'jane.smith@company.com',
-    role: 'employee',
-    name: 'Jane Smith',
-    managerId: '3'
-  },
-  {
-    id: '3',
-    username: 'alice.manager',
-    email: 'alice.manager@company.com',
-    role: 'manager',
-    name: 'Alice Manager'
-  }
-];
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [availableUsers, setAvailableUsers] = useState<User[]>([]);
 
   useEffect(() => {
     // Check if user is logged in from localStorage
@@ -42,20 +17,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+    
+    // Load available users for demo login
+    loadAvailableUsers();
     setIsLoading(false);
   }, []);
 
-  const login = async (username: string, password: string): Promise<boolean> => {
+  const loadAvailableUsers = async () => {
+    try {
+      const response = await api.getUsers();
+      if (response.success && response.data) {
+        setAvailableUsers(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to load users:', error);
+    }
+  };
+
+  const login = async (userId: string): Promise<boolean> => {
     setIsLoading(true);
     
-    // Mock authentication - in real app, this would be an API call
-    const foundUser = mockUsers.find(u => u.username === username);
-    
-    if (foundUser && password === 'password123') {
-      setUser(foundUser);
-      localStorage.setItem('user', JSON.stringify(foundUser));
-      setIsLoading(false);
-      return true;
+    try {
+      const response = await api.login(userId);
+      
+      if (response.success && response.data) {
+        setUser(response.data);
+        localStorage.setItem('user', JSON.stringify(response.data));
+        setIsLoading(false);
+        return true;
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
     }
     
     setIsLoading(false);
@@ -68,7 +60,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, logout, isLoading, availableUsers }}>
       {children}
     </AuthContext.Provider>
   );
